@@ -11,7 +11,9 @@ io.on('connection',function(socket){
 
 	socket.on('message',function(message){
 		console.log('Message receieved: '+message.text);
-		socket.broadcast.emit('message',message);
+		
+		//socket.broadcast.emit('message',message);  send it to all except us
+		io.emit('message',message);
 	});
 
 	socket.emit('message',{
