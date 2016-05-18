@@ -1,11 +1,19 @@
 var name = getQueryVariable('name')||'Anonymous';
-var room  =getQueryVariable('room');
+var room  =getQueryVariable('room')|| 'Unnamed room';
 var socket =io();
 
 console.log(name+'wants to join' +room);
-//when connection with socket is established
+jQuery('.room-title').text(room);
+
+//when connection with socket is established. Client succesfully conects to server
 socket.on('connect',function(){
 	console.log('Connected to socket io server');
+	socket.emit('joinRoom',{
+		name:name,
+		room:room
+	});
+
+	
 });
 
 //when socket receives a message from server

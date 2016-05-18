@@ -7,15 +7,32 @@ var moment = require('moment');
 
 app.use(express.static(__dirname+'/public'));
 
+var clientInfo={};
+
 io.on('connection',function(socket){
 	console.log('User connected via socket.io!');
+
+	//creating custom event, when someone joins a room
+	socket.on('joinRoom',function(req){
+		
+		//socket.io generates identifier. helps us store what user connected as
+		clientInfo[socket.id]=req;
+
+		//join is a builting socket method
+		socket.join(req.room);
+		socket.broadcast.to(req.room).emit('message',{
+			name:'System',
+			text:req.name +'has joined!',
+			timestamp:moment.valueOf()
+		});//everybody but current socket
+	});
 
 	socket.on('message',function(message){
 		console.log(message.timestamp+': Message receieved: '+message.text);
 		
 		//socket.broadcast.emit('message',message);  send it to all except us
 		message.timestamp=moment().valueOf();
-		io.emit('message',message);
+		io.to(clientInfo[socket.id].room).emit('message',message);
 	});
 
 	//timestamp property = javascript timestamp
