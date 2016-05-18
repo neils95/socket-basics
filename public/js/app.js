@@ -19,13 +19,16 @@ socket.on('connect',function(){
 //when socket receives a message from server
 socket.on('message',function(message){
 	var momentTimestamp=moment.utc(message.timestamp);
-	var $message=jQuery('.messages');
+	
+	var $messages=jQuery('.messages');
+	var $message =jQuery('<li class="list-group-item"></li>')
 
 	console.log('New message');
 	console.log(message);
 
 	$message.append('<p><strong>'+message.name+' ' +momentTimestamp.local().format('h:mm a')+'</strong></p>')
 	$message.append('<p>'+ message.text+'</p>');
+	$messages.append($message);
 });
 
 // Handling submitting of new message. Start with pund for ids, money sign talks about jquery instance
