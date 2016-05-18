@@ -12,6 +12,21 @@ var clientInfo={};
 io.on('connection',function(socket){
 	console.log('User connected via socket.io!');
 
+	//built in socket.io event to leave room
+	socket.on('disconnect',function(){
+		var userData= clientInfo[socket.id];
+		//cehck if client exists
+		if(typeof userData!=undefined){
+			socket.leave(userData.room);//user is disconnected
+			io.to(userData.room).emit('message',{
+				name:'System',
+				text:userData.name + ' has left',
+				timestamp: moment().valueOf()
+			});
+			delete clientInfo[socket.id];
+		}
+	});
+
 	//creating custom event, when someone joins a room
 	socket.on('joinRoom',function(req){
 		
